@@ -15,6 +15,8 @@ app.get("/", (req, res) => {
 });
 
 // ✅ CREATE ORDER ROUTE
+const axios = require("axios");
+
 app.post("/create-order", async (req, res) => {
   try {
     const amount = req.body.amount;
@@ -23,15 +25,40 @@ app.post("/create-order", async (req, res) => {
       return res.status(400).json({ message: "Amount is required" });
     }
 
-    // 🔥 Fake response (for now testing)
-    // Replace later with real Cashfree API call
-    return res.json({
-      payment_session_id: "test_session_" + Date.now()
+    const orderId = "order_" + Date.now();
+
+    const response = await axios.post(
+      "https://api.cashfree.com/pg/orders",
+      {
+        order_id: orderId,
+        order_amount: amount,
+        order_currency: "INR",
+        customer_details: {
+          customer_id: "cust_" + Date.now(),
+          customer_email: "test@gmail.com",
+          customer_phone: "9999999999"
+        }
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-version": "2022-09-01",
+          "x-client-id": process.env.APP_ID,
+          "x-client-secret": process.env.SECRET_KEY
+        }
+      }
+    );
+
+    res.json({
+      payment_session_id: response.data.payment_session_id,
+      order_id: orderId
     });
 
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Server error" });
+    console.error("Cashfree error:", err.response?.data || err.message);
+    res.status(500).json({
+      message: "Cashfree order creation failed"
+    });
   }
 });
 
