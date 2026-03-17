@@ -1,4 +1,8 @@
 require("dotenv").config();
+const cors = require("cors");
+app.use(cors({
+  origin: "https://portfolio-forgee.netlify.app"
+}));
 const express = require("express");
 const axios   = require("axios");
 const cors    = require("cors");
