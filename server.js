@@ -118,8 +118,7 @@ app.get("/", (req, res) =>
 
 // ─── Start ────────────────────────────────────────────────────────────────────
 const PORT = process.env.PORT || 5000;
+
 app.listen(PORT, () => {
-  console.log(`✅  Server running on http://localhost:${PORT}`);
-  console.log(`    POST http://localhost:${PORT}/create-order`);
-  console.log(`    GET  http://localhost:${PORT}/verify-payment/:orderId`);
+  console.log("Server running on port " + PORT);
 });
